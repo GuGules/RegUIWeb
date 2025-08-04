@@ -1,0 +1,33 @@
+name: Déploiement vers registre
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Configuration de l’environnement NodeJS
+      uses: actions/setup-node@v3.9.1
+
+    - name: Installations des dépendances
+      run: npm install
+
+    - name: Build de l’application (npm run build)
+      run: npm run build
+
+    - name: Configuration de l’environnement Docker
+      uses: docker/setup-docker-action@v4.3.0
+      
+    - name: Construction de l’image docker
+      run: docker build -t regui .
+
+    - name: Envoi de l’image docker sur le registre public
+      run : |
+        docker tag regui public.registry.jules-pillot.eu/regui:latest
+        docker push public.registry.jules-pillot.eu/regui:latest
+      
