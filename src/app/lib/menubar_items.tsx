@@ -78,7 +78,7 @@ export const items = [
     }
 ];
 export function EndMenu() {
-    const menuRight = useRef(null);
+    const menuRight = useRef<Menu>(null);
 
     return (
         <>

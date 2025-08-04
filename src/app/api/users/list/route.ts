@@ -2,7 +2,7 @@ import { listUsers, checkIsAdmin } from '@/app/lib/reguidb/user';
 import { sessionIsOk } from '@/app/lib/session';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(req: NextRequest){
+export async function GET(){
     const userId = await sessionIsOk();
     if (!userId) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

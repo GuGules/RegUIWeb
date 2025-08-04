@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { sessionIsOk } from "@/app/lib/session";
 import { getUserById } from "@/app/lib/reguidb/user";
 
-export async function GET(req: NextRequest){
+export async function GET(){
 
     const userId = await sessionIsOk();
 

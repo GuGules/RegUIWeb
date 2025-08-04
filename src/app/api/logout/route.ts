@@ -1,9 +1,9 @@
 import { deleteSession } from '@/app/lib/session'
 import { cookies } from 'next/headers'
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 
-export async function GET(req: NextRequest) {
+export async function GET() {
     const cookieStore = await cookies();
     const sessionCookie = cookieStore.get('session');
 

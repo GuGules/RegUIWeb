@@ -1,7 +1,7 @@
 "use client";
 import { use, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { checkSessionForAdmin } from "@/app/lib/ui/checkSession";
+import { useCheckSessionForAdmin } from "@/app/lib/ui/checkSession";
 
 // Import des composants PrimeReact
 import { Menubar } from 'primereact/menubar';
@@ -16,13 +16,12 @@ import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
 
 // Import des données du menu
 import { items, start, end } from '@/app/lib/menubar_items';
-import { ms } from "zod/locales";
 
-export default function editUserPage({ params }: { params: Promise<{ userId: string }> }) {
+export default function EditUserPage({ params }: { params: Promise<{ userId: string }> }) {
 
-    const msgs = useRef<Messages>(null);
     const router = useRouter();
     const [visible, setVisible] = useState(false);
+    const msgs = useRef<Messages>(null);
 
     // Récupération de l'ID de l'utilisateur à partir des paramètres
     const { userId } = use(params);
@@ -36,7 +35,7 @@ export default function editUserPage({ params }: { params: Promise<{ userId: str
 
     // Vérification de l'utilisateur connecté
     // Si l'utilisateur n'est pas connecté, il sera redirigé vers la page de connexion
-    checkSessionForAdmin();
+    useCheckSessionForAdmin();
 
     useEffect(() => {
         // Récupération des données de l'utilisateur
@@ -59,7 +58,7 @@ export default function editUserPage({ params }: { params: Promise<{ userId: str
         fetchUserData();
     }, [userId]);
 
-    const askConfirmation = (event:any) => {
+    const askConfirmation = (event: React.MouseEvent<HTMLButtonElement>) => {
         confirmPopup({
             target: event.currentTarget,
             message: 'Voulez-vous vraiment supprimer cet utilisateur ?',

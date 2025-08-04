@@ -1,5 +1,5 @@
 "use client";
-import { checkSessionForAdmin } from '@/app/lib/ui/checkSession';
+import { useCheckSessionForAdmin } from '@/app/lib/ui/checkSession';
 
 /* Import des composants PrimeReact */
 import { Card } from 'primereact/card';
@@ -8,10 +8,12 @@ import { Menubar } from 'primereact/menubar';
 /* Import des items du menu */
 import { items, start, end } from '@/app/lib/menubar_items';
 
+// Import des composants React
+import Image from 'next/image';
 
 export default function AppDetailsPage(){
     // Vérification de la session utilisateur;
-    checkSessionForAdmin();
+    useCheckSessionForAdmin();
 
     return (
         <div>
@@ -20,7 +22,7 @@ export default function AppDetailsPage(){
             <div className= "mr-2 ml-2">
                 <Card title="A propos de l'application">
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
-                        <img src="/favicon.ico" alt="Logo RegUI" className="" style={{ width: '20rem', height: '20rem' }} />
+                        <Image src="/favicon.ico" alt="Logo RegUI" className="" width={20} height={20} style={{width:'20rem', height:'20rem'}} />
                     </div>
                     <div style={{ height: '1rem'}}></div>
                     <p>

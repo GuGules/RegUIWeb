@@ -1,5 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
+import { NextRequest, NextResponse } from 'next/server'; 
 import {checkUserPassword} from '@/app/lib/reguidb/user'
 import { createSession } from '@/app/lib/session';
 

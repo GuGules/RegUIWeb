@@ -7,7 +7,7 @@ export async function POST(req: NextRequest){
     const formData = await req.json();
     console.log(formData);
     // Vérification de la session utilisateur
-    const userId = await sessionIsOk(req);
+    const userId = await sessionIsOk();
     if (!userId) {
         return NextResponse.json({ error: "Session invalide" }, { status: 401 });
     }

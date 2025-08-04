@@ -1,12 +1,12 @@
 'use client';
 
-import { checkSessionForLoginPage } from '@/app/lib/ui/checkSession';
+import { useCheckSessionForLoginPage } from '@/app/lib/ui/checkSession';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
     
-    checkSessionForLoginPage();
+    useCheckSessionForLoginPage();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -32,17 +32,15 @@ export default function LoginPage() {
             if (!response.ok) {
                 throw new Error('Identifiants invalides');
             } else {
-                // TODO : Enregistrements du JWT en session
-                router.replace('/'); // Redirection vers la page d'accueil après connexion réussie
+                router.replace('/home'); // Redirection vers la page d'accueil après connexion réussie
             }
 
-            
-            // Ici, tu peux rediriger ou lancer la recherche après connexion
-            // Exemple : window.location.href = '/search';
-            // const data = await response.json();
-            // ...
-        } catch (err: any) {
-            setError(err.message || 'Erreur lors de la connexion');
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message || 'Erreur lors de la connexion');
+            } else {
+                setError('Erreur lors de la connexion');
+            }
         } finally {
             setIsLoading(false);
         }

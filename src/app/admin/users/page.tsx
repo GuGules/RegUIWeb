@@ -1,5 +1,5 @@
 "use client";
-import { checkSessionForAdmin } from '@/app/lib/ui/checkSession'
+import { useCheckSessionForAdmin } from '@/app/lib/ui/checkSession'
 /* Imports des composants PrimeReact */
 import { Menubar } from 'primereact/menubar';
 import { Card } from 'primereact/card';
@@ -15,20 +15,27 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import 'primeicons/primeicons.css';
 
+type User = {
+    id: number;
+    prenom: string;
+    nom: string;
+    email: string;
+    isAdmin: number;
+};
 
 export default function UserAdminPage() {
     // Vérification de la session utilisateur
     // Si la session n'est pas valide, l'utilisateur est redirigé vers la page de connexion
-    checkSessionForAdmin();
+    useCheckSessionForAdmin();
     const router = useRouter();
 
-    var msgs = useRef<Messages>(null);
+    const msgs = useRef<Messages>(null);
 
     const goToCreateUserForm = () => {
         window.location.href = '/admin/users/create';
     }
 
-    const isAdminBodyTemplate = (rowData: any) => (
+    const isAdminBodyTemplate = (rowData: { isAdmin: number }) => (
         <Checkbox checked={rowData.isAdmin === 1} disabled />
     );
 
@@ -44,7 +51,7 @@ export default function UserAdminPage() {
                     body: JSON.stringify({ deletedUserId: userId }),
                 });
                 if (response.ok) {
-                    setUsers(users.filter(u => u.id !== userId));
+                    setUsers(users.filter((u) => (u as User).id !== userId));
                 } else {
                     const errorData = await response.json();
                     msgs.current?.show({ severity: 'error', summary: 'Erreur', detail: errorData.error || 'Erreur lors de la suppression de l\'utilisateur' });
@@ -56,7 +63,7 @@ export default function UserAdminPage() {
     };
 
     // Template pour la colonne Actions
-    const actionsBodyTemplate = (rowData: any) => (
+    const actionsBodyTemplate = (rowData: { id: number }) => (
         <div>
             <Button
                 icon="pi pi-pencil"
@@ -74,7 +81,7 @@ export default function UserAdminPage() {
     );
 
     // Fetch users by api
-    const [users, setUsers] = useState<any[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
     useEffect(() => {
         const fetchUsers = async () => {
             try {
@@ -83,7 +90,7 @@ export default function UserAdminPage() {
                     throw new Error('Failed to fetch users');
                 }
                 const data = await response.json();
-                setUsers(data);
+                setUsers(data as User[]);
             } catch (error) {
                 console.error('Error fetching users:', error);
             }
@@ -99,7 +106,7 @@ export default function UserAdminPage() {
                 <h1 className="text-2xl text-gray-950">Gestion des Utilisateurs</h1>
                 <div style={{ height: '1rem' }} />
                 <Card title="Actions">
-                    <Messages refs={msgs} />
+                    <Messages ref={msgs} />
                     <Button label="Créer un utilisateur" icon="pi pi-user-plus" onClick={() => goToCreateUserForm()} className="p-button-success mr-2" />
                 </Card>
                 <div style={{ height: '1rem' }} />

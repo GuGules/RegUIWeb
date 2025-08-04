@@ -51,7 +51,10 @@ export async function sessionIsOk(){
   }
   else {
     const sessionData = await decrypt(sessionCookie.value);
-    const userId=await checkSession(sessionData.userId,sessionCookie.value);
+    if (!sessionData || typeof sessionData.userId !== "number") {
+      return null;
+    }
+    const userId = await checkSession(sessionData.userId, sessionCookie.value);
     if (!userId) {
       return null;
     } else {

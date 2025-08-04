@@ -5,7 +5,7 @@ import { checkIsAdmin } from "@/app/lib/reguidb/user";
 
 export async function POST(req: NextRequest){
     const userId = await sessionIsOk();
-    var user= null;
+    let user= null;
     if (!userId) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest){
         return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
     
-    var userData = await req.json();
+    const userData = await req.json();
     
     if (!userData.email || !userData.lastName || !userData.firstName || !userData.password || !userData.confirmedPassword) {
         return NextResponse.json({ error: 'Bad Request' }, { status: 400 });

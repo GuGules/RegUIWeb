@@ -1,7 +1,6 @@
 "use client";
-import { use, useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { checkSession } from "@/app/lib/ui/checkSession";
+import { useState, useEffect, useRef } from "react";
+import { useCheckSession } from "@/app/lib/ui/checkSession";
 
 // Import des composants PrimeReact
 import { Menubar } from 'primereact/menubar';
@@ -15,10 +14,9 @@ import { Dialog } from 'primereact/dialog';
 // Import des données du menu
 import { items, start, end } from '@/app/lib/menubar_items';
 
-export default function editProfilePage() {
+export default function EditProfilePage() {
     
-    var msgs = useRef<Messages>(null);
-    const router = useRouter();
+    const msgs = useRef<Messages>(null);
 
     // Récupération de l'ID de l'utilisateur à partir des paramètres
     const [userId, setUserId] = useState('');
@@ -86,7 +84,7 @@ export default function editProfilePage() {
     }
     // Vérification de l'utilisateur connecté
     // Si l'utilisateur n'est pas connecté, il sera redirigé vers la page de connexion
-    checkSession();
+    useCheckSession();
 
     useEffect(() => {
         // Récupération des données de l'utilisateur

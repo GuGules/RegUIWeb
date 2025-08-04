@@ -13,7 +13,14 @@ import { Button } from "primereact/button";
 import { InputSwitch } from "primereact/inputswitch";
 import { Messages } from 'primereact/messages';
 
+// Sécurité
+
+import { useCheckSessionForAdmin } from "@/app/lib/ui/checkSession";
+
 export default function CreateUserPage(){
+
+    // Vérification de la session utilisateur
+    useCheckSessionForAdmin();
 
     const [adminMode, setAdminMode] = useState(false);
     const msgs = useRef<Messages>(null);

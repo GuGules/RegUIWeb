@@ -1,16 +1,29 @@
 import bcrypt from 'bcryptjs';
 import { pool } from '@/app/lib/reguidb/db';
+import type { ResultSetHeader } from 'mysql2';
+
+type CompleteUser = {
+    id: string,
+    prenom: string,
+    nom: string,
+    email: string,
+    created_at: Date,
+    isAdmin: number,
+    mdp: string // Le mot de passe n'est pas toujours nécessaire, par exemple lors de la création d'un utilisateur
+}
 
 export async function getUserByEmail(email: string) { 
-    var userData: Array<any> = await pool.execute(`SELECT * from users WHERE email = "${email}" LIMIT 1`);
+    const [rows] = await pool.execute(`SELECT * from users WHERE email = "${email}" LIMIT 1`);
+    const userData = rows as unknown[];
     if (userData.length === 0) {
         return null;
     }
     return userData[0];
 }
 
-export async function getUserById(userId:string){
-    var [userData]: Array<any> = await pool.execute(`SELECT id, nom, prenom, email, created_at, isAdmin from users WHERE id = "${userId}" LIMIT 1`);
+export async function getUserById(userId: string) {
+    const [rows] = await pool.execute(`SELECT id, nom, prenom, email, created_at, isAdmin from users WHERE id = "${userId}" LIMIT 1`);
+    const userData = rows as unknown[];
     if (userData.length === 0) {
         return null;
     }
@@ -19,32 +32,30 @@ export async function getUserById(userId:string){
 
 export async function checkUserPassword(email: string, password: string) {
     // Récupération de l'utilisateur par email
-    const [user] = await getUserByEmail(email);
+    const user = await getUserByEmail(email);
     if (!user) {
         return null;
     }
-    const isMatch = await bcrypt.compare(password, user.mdp);
+    const isMatch = await bcrypt.compare(password, (user as CompleteUser).mdp);
     if (!isMatch){
         return null;
     }
-    return user.id;
+    return (user as CompleteUser).id;
 }
 
 async function getPasswordFromId(userId: string) {
-    const [user] = await pool.execute(`SELECT mdp FROM users WHERE id = ?`, [userId]);
-    if (!user) {
-        return null;
-    }
-    return user;
+    const [rows] = await pool.execute(`SELECT mdp FROM users WHERE id = ?`, [userId]);
+    return rows as unknown[];
 }
 
 export async function checkUserPasswordWithId(userId: string, password: string) {
-    // Récupération de l'utilisateur par email
-    const [user] = await getPasswordFromId(userId);
+    // Récupération de l'utilisateur par id
+    const rows = await getPasswordFromId(userId);
+    const user = rows[0];
     if (!user) {
         return null;
     }
-    const isMatch = await bcrypt.compare(password, user.mdp);
+    const isMatch = await bcrypt.compare(password, (user as CompleteUser).mdp);
     if (!isMatch){
         return false;
     }
@@ -73,15 +84,16 @@ export async function createAdmin(email: string, mdp: string, name: string, firs
 }
 
 
-export async function checkIsAdmin(userId:string){
-    const [user] = await pool.execute(`SELECT * FROM users WHERE id = ?`, [userId]);
-    if (!user) {
+export async function checkIsAdmin(userId: string) {
+    const [rows] = await pool.execute(`SELECT * FROM users WHERE id = ?`, [userId]);
+    const user = rows as CompleteUser[];
+    if (!user || user.length === 0) {
         return false;
     }
     return user[0].isAdmin === 1;
 }
 
-export async function listUsers(){
+export async function listUsers() {
     try {
         const [users] = await pool.execute(`SELECT id, nom, prenom, email, created_at, isAdmin FROM users`);
         return users;
@@ -97,30 +109,38 @@ export async function deleteUserById(userId: number) {
         await pool.execute('DELETE FROM users WHERE id = ?', [userId]);
         return;
     } catch (error) {
-        throw new Error('Error deleting user: ' + error.message);
+        throw new Error('Error deleting user: ' + (error as Error).message);
     }
 }
 
-export async function updateUser(userId: string, firstName: string, lastName:string, isAdmin: boolean){
+export async function updateUser(userId: string, firstName: string, lastName: string, isAdmin: boolean) {
     try {
-        const [result] = await pool.execute(`UPDATE users SET prenom = ?, nom = ?, isAdmin = ? WHERE id = ?`, [firstName, lastName, isAdmin ? 1 : 0, userId]);
-        if (result.affectedRows === 0) {
+        const [result] = await pool.execute(
+            `UPDATE users SET prenom = ?, nom = ?, isAdmin = ? WHERE id = ?`,
+            [firstName, lastName, isAdmin ? 1 : 0, userId]
+        );
+        const header = result as ResultSetHeader;
+        if (header.affectedRows === 0) {
             throw new Error('User not found or no changes made');
         }
         return true;
     } catch (error) {
-        throw new Error('Error updating user: ' + error.message);
+        throw new Error('Error updating user: ' + (error as Error).message);
     }
 }
 
-export async function changeUserPassword(userId: string, password: string){
+export async function changeUserPassword(userId: string, password: string) {
     try {
-        const [result] = await pool.execute('UPDATE users SET mdp = ? WHERE id = ?', [await bcrypt.hash(password,10), userId]);
-        if (result.affectedRows === 0) {
+        const [result] = await pool.execute(
+            'UPDATE users SET mdp = ? WHERE id = ?',
+            [await bcrypt.hash(password, 10), userId]
+        );
+        const header = result as ResultSetHeader;
+        if (header.affectedRows === 0) {
             throw new Error('User not found or no changes made');
         }
         return true;
     } catch (error) {
-        throw new Error('Error changing user password: ' + error.message);
+        throw new Error('Error changing user password: ' + (error as Error).message);
     }
 }
