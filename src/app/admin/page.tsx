@@ -87,7 +87,7 @@ export default function AdminPage(){
                         <p>Comes later</p>
                     </TabPanel>
                     <TabPanel header="&nbsp;Envoi de mail" leftIcon="pi pi-envelope">
-                        <label className="ml-2" htmlFor="emailModeSelector">Mode d'envoi de mail : {emailMode}</label>
+                        <label className="ml-2" htmlFor="emailModeSelector">Mode d&apos;envoi de mail : {emailMode}</label>
                         <Dropdown id="emailModeSelector" value={emailMode} onChange={(e) => setEmailMode(e.value)} options={mailOptions} optionLabel="name" 
                         placeholder="Sélectionner un mode d'envoi de mail" className="w-full md:w-14rem" checkmark={true}  highlightOnSelect={false} />
                         <div style={{height:'1rem'}}></div>
