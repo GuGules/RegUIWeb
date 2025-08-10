@@ -70,10 +70,6 @@ export default function AdminPage(){
         )
     }
 
-
-
-
-
     useCheckSessionForAdmin();
 
     return(
