@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'; 
-import {checkUserPassword} from '@/app/lib/reguidb/user'
+import {checkUserPassword} from '@/app/lib/reguidb/user';
 import { createSession } from '@/app/lib/session';
 
 // Exemple d'utilisateur stocké en "base de données"

@@ -28,3 +28,5 @@ CREATE TABLE IF NOT EXISTS `config` (
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+INSERT INTO `config` (`key`, `value`) VALUES
+('db_version', '1.0.0');
