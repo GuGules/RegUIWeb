@@ -16,15 +16,12 @@ export const pool = await mysql.createPool({
 export async function configureDatabase(){
     try {
         // On liste les fichiers SQL dans le dossier migrations
-        var sql_files = fs.readdirSync('./sql')
-        console.log(sql_files)
+        let sql_files = fs.readdirSync('./sql')
         try {
-            const [rows] = await pool.execute('SELECT value FROM config WHERE `key` = "db_version"');
-            const dbVersion = rows[0]?.value;
+            const dbVersion = await getDbVersion();
 
-            console.log('Database version:', dbVersion);
             // On ignore les fichiers sql dont la version est déjà appliquée
-            for (var i = 1; i <= dbVersion; i++){
+            for (let i = 1; i <= dbVersion; i++){
                 const sqlFileName = `v${i}.sql`;
                 if (sql_files.includes(sqlFileName)) {
                     sql_files = removeItemFromArray(sql_files,sqlFileName);
@@ -44,8 +41,8 @@ export async function configureDatabase(){
                 }
             }
 
-        } catch (error:any){
-            if (error.sqlMessage.indexOf("Unknown database") !== -1){
+        } catch (error: unknown){
+            if ((error as {sqlMessage : string}).sqlMessage.indexOf("Unknown database") !== -1){
 
                 // Database not installed, here the installation
 
@@ -74,5 +71,15 @@ export async function configureDatabase(){
         }
     } catch (error){
         console.error('Error configuring database:', error);
+    }
+}
+
+export async function getDbVersion(){
+    try {
+        const [rows] = await pool.execute('SELECT value FROM config WHERE `key` = "db_version"');
+        return rows[0]?.value;
+    } catch (error) {
+        console.error('Error getting database version:', error);
+        return null;
     }
 }

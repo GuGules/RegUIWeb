@@ -1,5 +1,5 @@
-export function removeItemFromArray(array:Array<any>,item:any){
-    var newArray = [];
+export function removeItemFromArray(array:Array<unknown>,item:unknown){
+    const newArray = [];
     if (array.includes(item)){
         for (const arrayItem of array){
             if (arrayItem !== item){

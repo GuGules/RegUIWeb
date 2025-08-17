@@ -62,7 +62,11 @@ export async function GET(request: NextRequest) {
   });
 }
 
-function parseScope(scope: string | null): any[] {
+function parseScope(scope: string | null): Array<{
+  type: string;
+  name: string;
+  actions: string[];
+}> {
   if (!scope) {
     // Accès complet par défaut si aucun scope spécifique n'est demandé
     return [{
