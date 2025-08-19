@@ -1,6 +1,6 @@
 import mysql from 'mysql2/promise';
 import fs from 'fs';
-import { removeItemFromArray } from '../utils/arrayTools';
+import { removeStringItemFromStringArray } from '../utils/arrayTools';
 
 export const pool = await mysql.createPool({
     host: process.env.DB_HOST,
@@ -16,15 +16,18 @@ export const pool = await mysql.createPool({
 export async function configureDatabase(){
     try {
         // On liste les fichiers SQL dans le dossier migrations
-        let sql_files = fs.readdirSync('./sql')
+        let sql_files:string[] = fs.readdirSync('./sql')
         try {
             const dbVersion = await getDbVersion();
+            if (dbVersion === null) {
+                throw new Error('Database version not found (Unknown database)');
+            }
 
             // On ignore les fichiers sql dont la version est déjà appliquée
             for (let i = 1; i <= dbVersion; i++){
-                const sqlFileName = `v${i}.sql`;
+                const sqlFileName:string = `v${i}.sql`;
                 if (sql_files.includes(sqlFileName)) {
-                    sql_files = removeItemFromArray(sql_files,sqlFileName);
+                    sql_files = removeStringItemFromStringArray(sql_files,sqlFileName);
                 }
             }
 
@@ -77,7 +80,8 @@ export async function configureDatabase(){
 export async function getDbVersion(){
     try {
         const [rows] = await pool.execute('SELECT value FROM config WHERE `key` = "db_version"');
-        return rows[0]?.value;
+        const infos = rows as unknown[];
+        return (infos[0] as {value: number}).value;
     } catch (error) {
         console.error('Error getting database version:', error);
         return null;

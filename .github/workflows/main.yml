@@ -15,7 +15,10 @@ jobs:
       uses: actions/setup-node@v3.9.1
 
     - name: Installations des dépendances
-      run: npm install
+      run: npm ci
+
+    - name: Désactivation de la télémétrie Next.js
+      run: npm run disable:telemetry
 
     - name: Build de l’application (npm run build)
       run: npm run build
@@ -24,10 +27,12 @@ jobs:
       uses: docker/setup-docker-action@v4.3.0
       
     - name: Construction de l’image docker
-      run: docker build -t regui .
+      run: docker build -t regui ./docker
 
     - name: Envoi de l’image docker sur le registre public
       run : |
+        docker tag regui public.registry.jules-pillot.eu/regui:$(date +'%Y-%m-%d')
+        docker push public.registry.jules-pillot.eu/regui:$(date +'%Y-%m-%d')
         docker tag regui public.registry.jules-pillot.eu/regui:latest
         docker push public.registry.jules-pillot.eu/regui:latest
 
