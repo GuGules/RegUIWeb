@@ -1,7 +1,7 @@
 services:
   registry:
     image: registry:2
-    container_name: registry
+    container_name: registry-regui
     ports:
       - "5000:5000"
     environment:
@@ -9,7 +9,8 @@ services:
       REGISTRY_AUTH_TOKEN_REALM: http://host.docker.internal:3000/auth
       REGISTRY_AUTH_TOKEN_SERVICE: "Docker registry"
       REGISTRY_AUTH_TOKEN_ISSUER: "MyTokenAuth"
-      REGISTRY_AUTH_TOKEN_ROOTCERTBUNDLE: /certs/auth-cert.pem
+      REGISTRY_AUTH_TOKEN_ROOTCERTBUNDLE: certs/ca.pem
+      REGISTRY_HTTP_SECRET:  "363dcdaacbb3caea17ce23e38944f0845912f4f9"
     volumes:
       - ./registry/data:/var/lib/registry
-      - ./auth/certs:/certs:ro
+      - ./registry/certs:/certs
