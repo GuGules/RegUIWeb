@@ -27,7 +27,7 @@ jobs:
       uses: docker/setup-docker-action@v4.3.0
       
     - name: Construction de l’image docker
-      run: docker build -t regui ./docker
+      run: docker build -t regui .
 
     - name: Envoi de l’image docker sur le registre public
       run : |
