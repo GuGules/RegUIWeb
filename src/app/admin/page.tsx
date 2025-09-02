@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Import des composants "fait maison"
 import { useCheckSessionForAdmin } from "@/app/lib/ui/checkSession"
@@ -14,6 +14,10 @@ import { InputText } from "primereact/inputtext";
 import { FloatLabel } from "primereact/floatlabel";
 import { InputSwitch } from "primereact/inputswitch";
 import { Button } from "primereact/button";
+import { Dialog } from "primereact/dialog";
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { InputText } from 'primereact/inputtext';
 
 export default function AdminPage(){
 
@@ -21,14 +25,19 @@ export default function AdminPage(){
         { name: 'SMTP', value: 'SMTP' },
         { name: 'Resend', value: 'Resend' }
     ];
+
+    const [newRegistryName, setNewRegistryName] = useState<string>('');
+    const [newRegistryURL, setNewRegistryURL] = useState<string>('');
+    const [newRegistryDescription, setNewRegistryDescription] = useState<string>('');
+    const [registries, setRegistries] = useState<Array<any>>([]);
     const [emailMode, setEmailMode] = useState<string>('');
+    const [addRegModalVisible, setAddRegModalVisible] = useState<boolean>(false);
     const [smtpHost, setSmtpHost] = useState<string>('');
     const [smtpPort, setSmtpPort] = useState<string>('');
     const [smtpUser, setSmtpUser] = useState<string>('');
     const [smtpPassword, setSmtpPassword] = useState<string>('');
     // Pour le switch, on utilise un boolean
     const [smtpSecure, setSmtpSecure] = useState<boolean>(false);
-
     const SMTPConfig = ()=>{
         return ( 
             <>
@@ -72,6 +81,15 @@ export default function AdminPage(){
 
     useCheckSessionForAdmin();
 
+    useEffect(()=>{
+        const fetchData = async () => {
+            const response = await fetch('/api/admin/registries/list');
+            const data = await response.json();
+            setRegistries(data);
+        };
+        fetchData();
+    }, []);
+
     return(
         <div>
             <Menubar model={items} start={start} end={end} />
@@ -89,6 +107,23 @@ export default function AdminPage(){
                         <div style={{height:'1rem'}}></div>
                         {emailMode === 'SMTP' ? <SMTPConfig /> : null}
                         {emailMode === 'Resend' ? <ResendConfig /> : null}
+                    </TabPanel>
+                    <TabPanel header="&nbsp;Registres Connectés" leftIcon="pi pi-link">
+                        <Button onClick={() => setAddRegModalVisible(true)}>Ajouter un registre</Button>
+                        <div style={{height:'1rem'}}></div>
+                        <Dialog header="Enregistrer un nouveau registre" visible={addRegModalVisible} style={{ width: '50vw' }} onHide={() => {if (!addRegModalVisible) return; setAddRegModalVisible(false); }}>
+                            <div className="p-fluid">
+                                <InputText value={newRegistryName} placeholder="Nom" onChange={(e) => setNewRegistryName(e.target.value)} />
+                                <InputText value={newRegistryURL} placeholder="URL" onChange={(e) => setNewRegistryURL(e.target.value)} />
+                                <InputText value={newRegistryDescription} placeholder="Description" onChange={(e) => setNewRegistryDescription(e.target.value)} />
+                                <Button label="Enregistrer" icon="pi pi-save" onClick={handleCreateRegistry} />
+                            </div>
+                        </Dialog>
+                        <DataTable value={registries} tableStyle={{ minWidth: '50rem' }}>
+                            <Column field="nom" header="Nom"></Column>
+                            <Column field="url" header="URL"></Column>
+                            <Column field="description" header="Description"></Column>
+                        </DataTable>
                     </TabPanel>
                 </TabView>
                 
