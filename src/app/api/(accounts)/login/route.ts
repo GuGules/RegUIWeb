@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'; 
-import {checkUserPassword} from '@/app/lib/reguidb/user';
+import {checkIsAdmin, checkUserPassword} from '@/app/lib/reguidb/user';
 import { createSession } from '@/app/lib/session';
-
-// Exemple d'utilisateur stocké en "base de données"
-
+  
 export async function POST(req: NextRequest) {
   const { email, password } = await req.json();
   // Comparaison du hash
@@ -14,7 +12,7 @@ export async function POST(req: NextRequest) {
   }
 
   await createSession(userId);
-  return NextResponse.json({ message: 'Connexion réussie' }, { status: 200 });
-  
+  return NextResponse.json({ isAdmin: await checkIsAdmin(userId) }, { status: 200 });
+
 }
    

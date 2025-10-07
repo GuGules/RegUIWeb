@@ -28,5 +28,14 @@ CREATE TABLE IF NOT EXISTS `config` (
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS `registries` (
+    id int NOT NULL AUTO_INCREMENT,
+    `nom` VARCHAR(100) NOT NULL,
+    `url` TEXT NOT NULL,
+    `description` TEXT,
+    `is_public` BOOLEAN NOT NULL DEFAULT TRUE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 INSERT INTO `config` (`key`, `value`) VALUES
 ('db_version', '1');

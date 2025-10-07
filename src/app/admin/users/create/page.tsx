@@ -1,11 +1,10 @@
 "use client";
-import { items, start, end } from "@/app/lib/menubar_items";
+import { CustomMenubar } from "@/app/lib/menubar_items";
 /* Import des composants React & Next */
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 // Import des composants PrimeReact
-import { Menubar } from "primereact/menubar";
 import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
 import { FloatLabel } from "primereact/floatlabel";
@@ -69,7 +68,7 @@ export default function CreateUserPage(){
 
     return (
         <div>
-            <Menubar model={items} start={start} end={end} style={{ width: '100vw', borderRadius: 0 }} />
+            <CustomMenubar style={{ width: '100vw', borderRadius: 0 }} />
             <div style={{ height: '1rem' }} />
             <div className="mr-3 ml-3">
                 <Card title="Créer un Utilisateur">

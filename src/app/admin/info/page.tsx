@@ -3,10 +3,9 @@ import { useCheckSessionForAdmin } from '@/app/lib/ui/checkSession';
 
 /* Import des composants PrimeReact */
 import { Card } from 'primereact/card';
-import { Menubar } from 'primereact/menubar';
 
 /* Import des items du menu */
-import { items, start, end } from '@/app/lib/menubar_items';
+import { CustomMenubar } from '@/app/lib/menubar_items';
 
 // Import des composants React
 import Image from 'next/image';
@@ -17,7 +16,7 @@ export default function AppDetailsPage(){
 
     return (
         <div>
-            <Menubar model={items} start={start} end={end} />
+            <CustomMenubar/>
             <div style={{ height: '1rem'}}></div>
             <div className= "mr-2 ml-2">
                 <Card title="A propos de l'application">

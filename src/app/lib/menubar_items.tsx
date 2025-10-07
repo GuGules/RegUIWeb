@@ -2,7 +2,8 @@
 
 import { Menu } from 'primereact/menu';
 import { Button } from 'primereact/button';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Menubar } from 'primereact/menubar';
 
 export const profile_items = [
     {
@@ -21,60 +22,12 @@ export const items = [
     {
         label: 'Accueil',
         icon: 'pi pi-home',
-        command: () => window.location.href = '/'
+        command: () => window.location.href = '/home'
     },
     {
-        label: 'Registre',
+        label: 'Registres',
         icon:  "pi pi-box",
-        items: [
-            {
-                label: 'Nouveautés',
-                icon: 'pi pi-tags',
-                command: () => console.log('Nouveautés')
-            },
-            {
-                label: 'Promotions',
-                icon: 'pi pi-percentage',
-                command: () => console.log('Promotions')
-            },
-            {
-                label: 'Catégories',
-                icon: 'pi pi-list',
-                items: [
-                    {
-                        label: 'Électronique',
-                        icon: 'pi pi-mobile',
-                        command: () => console.log('Électronique')
-                    },
-                    {
-                        label: 'Maison',
-                        icon: 'pi pi-home',
-                        command: () => console.log('Maison')
-                    }
-                ]
-            }
-        ]
-    },
-        {
-        label: 'Administration',
-        icon: 'pi pi-cog',
-        items: [
-            {
-                label: 'Paramètres',
-                icon: 'pi pi-sliders-h',
-                command: () => window.location.href = '/admin'
-            },
-            {
-                label: 'Utilisateurs',
-                icon: 'pi pi-users',
-                command: () => window.location.href = '/admin/users'
-            },
-            {
-                label: 'À propos',
-                icon: 'pi pi-info-circle',
-                command: () => window.location.href = '/admin/info'
-            }
-        ]
+        command: () => window.location.href = '/registries'
     }
 ];
 export function EndMenu() {
@@ -99,5 +52,33 @@ export const start = (
     <img alt="logo" src="/favicon.ico" style={{ height: '2rem' }} className="mr-2" />
 );
 
-
 export const end = <EndMenu />;
+
+export const CustomMenubar = () => {
+    const [menuItems, setMenuItems] = useState(() => items.slice()); // copie initiale
+    
+    useEffect(() => {
+        const userIsAdmin = localStorage.getItem('isAdmin') === 'true';
+        
+        if (userIsAdmin) {
+             setMenuItems(prev => {
+                if (prev.find(i => i.label === 'Administration')) return prev;
+                return [
+                    ...prev,
+                    {
+                        label: 'Administration',
+                        icon: 'pi pi-cog',
+                        items: [
+                            { label: 'Paramètres', icon: 'pi pi-sliders-h', command: () => window.location.href = '/admin' },
+                            { label: 'Utilisateurs', icon: 'pi pi-users', command: () => window.location.href = '/admin/users' },
+                            { label: 'À propos', icon: 'pi pi-info-circle', command: () => window.location.href = '/admin/info' }
+                        ]
+                    }
+                ];
+            });
+        }}, [items]);
+
+    return (
+        <Menubar model={menuItems} start={start} end={end} />
+    );
+}

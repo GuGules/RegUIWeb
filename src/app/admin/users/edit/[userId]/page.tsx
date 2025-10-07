@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useCheckSessionForAdmin } from "@/app/lib/ui/checkSession";
 
 // Import des composants PrimeReact
-import { Menubar } from 'primereact/menubar';
 import { Card } from 'primereact/card';
 import { InputText } from 'primereact/inputtext';
 import { FloatLabel } from 'primereact/floatlabel';
@@ -14,8 +13,8 @@ import { Messages } from 'primereact/messages';
 import { Dialog } from 'primereact/dialog';
 import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
 
-// Import des données du menu
-import { items, start, end } from '@/app/lib/menubar_items';
+// Import du menu
+import { CustomMenubar } from '@/app/lib/menubar_items';
 
 export default function EditUserPage({ params }: { params: Promise<{ userId: string }> }) {
 
@@ -142,7 +141,7 @@ export default function EditUserPage({ params }: { params: Promise<{ userId: str
 
     return (
         <div>
-            <Menubar model={items} start={start} end={end} />   
+            <CustomMenubar />
             <div style={{ height: '1rem' }}></div>
             <div className="mr-2 ml-2">
                 <Card title="Actions Rapides" >

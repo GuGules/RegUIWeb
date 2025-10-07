@@ -32,6 +32,8 @@ export default function LoginPage() {
             if (!response.ok) {
                 throw new Error('Identifiants invalides');
             } else {
+                const data = await response.json();
+                localStorage.setItem('isAdmin', data.isAdmin);
                 router.replace('/home'); // Redirection vers la page d'accueil après connexion réussie
             }
 

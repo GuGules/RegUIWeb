@@ -38,3 +38,10 @@ export function useCheckSessionForAdmin() {
     });
   }, [router]);
 }
+
+export function isAdmin() {
+  return fetch("/api/checkSession").then(async (res) => {
+    const userData = await res.json();
+    return userData.isConnected && userData.isAdmin
+  });
+}

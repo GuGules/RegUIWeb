@@ -8,6 +8,7 @@ export default function LogoutPage() {
 
     fetch('/api/logout').then((res)=>{
         if (res.ok){
+            localStorage.clear();
             router.replace('/login');
         }
     });

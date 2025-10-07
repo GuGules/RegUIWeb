@@ -3,7 +3,6 @@ import { useState, useEffect, useRef } from "react";
 import { useCheckSession } from "@/app/lib/ui/checkSession";
 
 // Import des composants PrimeReact
-import { Menubar } from 'primereact/menubar';
 import { Card } from 'primereact/card';
 import { InputText } from 'primereact/inputtext';
 import { FloatLabel } from 'primereact/floatlabel';
@@ -12,7 +11,7 @@ import { Messages } from 'primereact/messages';
 import { Dialog } from 'primereact/dialog';
 
 // Import des données du menu
-import { items, start, end } from '@/app/lib/menubar_items';
+import { CustomMenubar } from '@/app/lib/menubar_items';
 
 export default function EditProfilePage() {
     
@@ -91,7 +90,6 @@ export default function EditProfilePage() {
         const fetchUserData = async () => {
             const response = await fetch(`/api/users/getProfile`);
             const data = await response.json();
-            console.log(data);
             if (response.ok) {
                 setUserId(data.userId);
                 setFirstName(data.prenom ?? '');
@@ -106,7 +104,7 @@ export default function EditProfilePage() {
     
     return (
         <div>
-            <Menubar model={items} start={start} end={end} />
+            <CustomMenubar />
             <div style={{ height: '1rem' }}></div>
             <div className="mr-2 ml-2">
                 <Card title="Actions Rapides">

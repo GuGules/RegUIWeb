@@ -12,7 +12,7 @@ export async function GET() {
         try {
             await deleteSession();
             console.log('Session deleted successfully');
-            return NextResponse.json({ message: 'Logout successful' }, { status: 200 });
+            return NextResponse.json({ message: 'Logout successful' }, { status: 200 });    
 
         } catch (error) {
             console.error('Error deleting session:', error);

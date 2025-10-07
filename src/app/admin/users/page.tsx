@@ -1,9 +1,8 @@
 "use client";
 import { useCheckSessionForAdmin } from '@/app/lib/ui/checkSession'
 /* Imports des composants PrimeReact */
-import { Menubar } from 'primereact/menubar';
 import { Card } from 'primereact/card';
-import { items, start, end } from '@/app/lib/menubar_items';
+import { CustomMenubar } from '@/app/lib/menubar_items';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Checkbox } from 'primereact/checkbox';
@@ -100,7 +99,7 @@ export default function UserAdminPage() {
 
     return (
         <div>
-            <Menubar model={items} start={start} end={end} style={{ width: '100vw', borderRadius: 0 }} />
+            <CustomMenubar/>
             <div style={{ height: '1rem' }} />
             <div className="ml-3 mr-3">
                 <h1 className="text-2xl text-gray-950">Gestion des Utilisateurs</h1>

@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // Import des composants "fait maison"
 import { useCheckSessionForAdmin } from "@/app/lib/ui/checkSession"
-import { items, start, end } from "@/app/lib/menubar_items";
+import { CustomMenubar } from "@/app/lib/menubar_items";
 
 /* Import des composants PrimeReact */
-import { Menubar } from "primereact/menubar";
 import { TabView,TabPanel } from "primereact/tabview";
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from "primereact/inputtext";
@@ -17,7 +16,9 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { InputText } from 'primereact/inputtext';
+import { Checkbox } from 'primereact/checkbox';
+import { Toast } from "primereact/toast";
+import { useRouter } from "next/navigation";
 
 export default function AdminPage(){
 
@@ -26,9 +27,11 @@ export default function AdminPage(){
         { name: 'Resend', value: 'Resend' }
     ];
 
+    const router = useRouter();
     const [newRegistryName, setNewRegistryName] = useState<string>('');
     const [newRegistryURL, setNewRegistryURL] = useState<string>('');
     const [newRegistryDescription, setNewRegistryDescription] = useState<string>('');
+    const [newRegistryIsPublic, setNewRegistryIsPublic] = useState<boolean>(false);
     const [registries, setRegistries] = useState<Array<any>>([]);
     const [emailMode, setEmailMode] = useState<string>('');
     const [addRegModalVisible, setAddRegModalVisible] = useState<boolean>(false);
@@ -36,6 +39,7 @@ export default function AdminPage(){
     const [smtpPort, setSmtpPort] = useState<string>('');
     const [smtpUser, setSmtpUser] = useState<string>('');
     const [smtpPassword, setSmtpPassword] = useState<string>('');
+    const errorAlert = useRef(null);
     // Pour le switch, on utilise un boolean
     const [smtpSecure, setSmtpSecure] = useState<boolean>(false);
     const SMTPConfig = ()=>{
@@ -71,6 +75,71 @@ export default function AdminPage(){
         )
     }
 
+    const handleCreateRegistry = async () => {
+        try {
+            const response = await fetch('/api/admin/registries/add', {
+                method: 'POST',
+                body:
+                    JSON.stringify({
+                        name: newRegistryName,
+                        url: newRegistryURL,
+                        description: newRegistryDescription,
+                        isPublic: newRegistryIsPublic
+                    }),
+            });
+            if (response.ok) {
+                // Reset form fields
+                setNewRegistryName('');
+                setNewRegistryURL('');
+                setNewRegistryDescription('');
+                setNewRegistryIsPublic(false);
+                setRegistries((await response.json()).registries);
+                errorAlert.current.show({ severity: 'success', summary: 'Succès', detail: 'Le registre a été créé avec succès.' });
+            } else {
+                errorAlert.current.show({ severity: 'error', summary: 'Erreur', detail: 'Une erreur est survenue lors de la création du registre.' });
+            }
+        } catch (error) {
+            console.error('Error creating registry:', error);
+            errorAlert.current.show({ severity: 'error', summary: 'Erreur', detail: 'Une erreur est survenue lors de la création du registre.' });
+        } finally {
+            setAddRegModalVisible(false);
+        }
+    }
+
+    const handleDeleteRegistry = async (registryId: number) => {
+        if (!confirm("Êtes-vous sûr de vouloir supprimer ce registre ? Cette action est irréversible.")) {
+            return;
+        }
+        try {
+            const response = await fetch(`/api/admin/registries/${registryId}`, {
+                method: 'DELETE',
+            });
+            if (response.ok) {
+                setRegistries(registries.filter(registry => registry.id !== registryId));
+                errorAlert.current.show({ severity: 'success', summary: 'Succès', detail: 'Le registre a été supprimé avec succès.' });
+            }
+            else {
+                errorAlert.current.show({ severity: 'error', summary: 'Erreur', detail: 'Une erreur est survenue lors de la suppression du registre.' });
+            }
+        } catch (error) {
+            console.error('Error deleting registry:', error);
+            errorAlert.current.show({ severity: 'error', summary: 'Erreur', detail: 'Une erreur est survenue lors de la suppression du registre.' });
+        }
+    }
+    // Template pour la colonne Actions
+    const actionsBodyTemplate = (rowData: { id: number }) => (
+        <div>
+            <Button
+                icon="pi pi-trash"
+                className="p-button-rounded p-button-text p-button-info mr-2"
+                style={{ color: 'red' }}
+                title="Supprimer le registre"
+                onClick={() => handleDeleteRegistry(rowData.id)}
+            />
+        </div>
+    );
+
+
     const ResendConfig = ()=> {
         return (
             <>
@@ -83,7 +152,7 @@ export default function AdminPage(){
 
     useEffect(()=>{
         const fetchData = async () => {
-            const response = await fetch('/api/admin/registries/list');
+            const response = await fetch('/api/registries/list');
             const data = await response.json();
             setRegistries(data);
         };
@@ -92,10 +161,11 @@ export default function AdminPage(){
 
     return(
         <div>
-            <Menubar model={items} start={start} end={end} />
+            <CustomMenubar />
             <div style={{height:'1rem'}}></div>
             <div className="ml-4 mr-4">
             <h1 className="text-2xl text-gray-950">Page de configuration</h1>
+                <Toast ref={errorAlert} position="bottom-right" />
                 <TabView> 
                     <TabPanel header="&nbsp;Globale" leftIcon="pi pi-cog">
                         <p>Comes later</p>
@@ -114,8 +184,14 @@ export default function AdminPage(){
                         <Dialog header="Enregistrer un nouveau registre" visible={addRegModalVisible} style={{ width: '50vw' }} onHide={() => {if (!addRegModalVisible) return; setAddRegModalVisible(false); }}>
                             <div className="p-fluid">
                                 <InputText value={newRegistryName} placeholder="Nom" onChange={(e) => setNewRegistryName(e.target.value)} />
+                                <div style={{height:'1rem'}}></div>
                                 <InputText value={newRegistryURL} placeholder="URL" onChange={(e) => setNewRegistryURL(e.target.value)} />
+                                <div style={{height:'1rem'}}></div>
                                 <InputText value={newRegistryDescription} placeholder="Description" onChange={(e) => setNewRegistryDescription(e.target.value)} />
+                                <div style={{height:'1rem'}}></div>
+                                <Checkbox inputId="newRegistryIsPublic" checked={newRegistryIsPublic} onChange={ (e) => setNewRegistryIsPublic(e.checked ?? false)}/>
+                                <label htmlFor="newRegistryIsPublic" className="ml-2">Registre Publique</label>
+                                <div style={{height:'1rem'}}></div>
                                 <Button label="Enregistrer" icon="pi pi-save" onClick={handleCreateRegistry} />
                             </div>
                         </Dialog>
@@ -123,6 +199,8 @@ export default function AdminPage(){
                             <Column field="nom" header="Nom"></Column>
                             <Column field="url" header="URL"></Column>
                             <Column field="description" header="Description"></Column>
+                            <Column field="is_public" header="Est Publique"></Column>
+                            <Column header="Actions" body={actionsBodyTemplate} />
                         </DataTable>
                     </TabPanel>
                 </TabView>
