@@ -37,6 +37,15 @@ CREATE TABLE IF NOT EXISTS `registries` (
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS `images`(
+    id int not null AUTO_INCREMENT,
+    nom_image varchar(255) not null,
+    `description` text,
+    registry_id int not null,
+    FOREIGN KEY (registry_id) REFERENCES registries(id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+)
+
 -- Insert version information on database creation
 INSERT INTO `config` (`key`, `value`) VALUES
 ('db_version', '1.0');

@@ -15,7 +15,8 @@ export default function Page({ params }: { params: { registryId: string } }) {
             <Button
                 icon="pi pi-search"
                 className="p-button-rounded p-button-text p-button-info mr-2"
-                title="Supprimer le registre"
+                title="Visualiser le repository"
+                onClick={() => window.location.href="/registries/" + registryId + "/" + rowData.name}
             />
         </div>
     );

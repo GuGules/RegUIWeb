@@ -63,3 +63,49 @@ export async function getRegistryData(
         pool.releaseConnection(conn);
     }
 }
+
+export async function getImageData(
+    registryId: string, imageName: string
+){
+    const conn = await pool.getConnection();
+    try{
+        const [rows] = await conn.query(`SELECT * FROM images WHERE registry_id = ? AND nom_image = ?`, [registryId, imageName]);
+        const data = (rows as unknown[])[0];
+        return data;
+    } catch (err){
+        console.error(err);
+        throw new Error('Failed to get image data from database');
+    } finally {
+        pool.releaseConnection(conn);
+    }
+}
+
+export async function setImageData(
+    registryId: string, imageName: string, description: string
+){
+    const conn = await pool.getConnection();
+    try{
+        const [rows] = await conn.query(`INSERT INTO images (registry_id, nom_image, description) VALUES (?, ?, ?)`, [registryId, imageName, description]);
+        return rows;
+    } catch (err){
+        console.error(err);
+        throw new Error('Failed to get image data from database');
+    } finally {
+        pool.releaseConnection(conn);
+    }
+}
+
+export async function updateImageData(
+    registryId: string, imageName: string, description: string
+){
+    const conn = await pool.getConnection();
+    try{
+        const [rows] = await conn.query(`UPDATE images SET description = ? WHERE registry_id = ? AND name = ?`, [description, registryId, imageName]);
+        return rows;
+    } catch (err){
+        console.error(err);
+        throw new Error('Failed to get image data from database');
+    } finally {
+        pool.releaseConnection(conn);
+    }
+}
