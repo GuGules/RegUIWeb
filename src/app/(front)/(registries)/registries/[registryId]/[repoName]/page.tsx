@@ -10,7 +10,7 @@ import { Editor } from 'primereact/editor';
 import { ListBox } from 'primereact/listbox';
 import { Toast } from "primereact/toast";
 import { TabView, TabPanel } from 'primereact/tabview';
-import { use, useEffect, useRef, useState } from "react";
+import { SyntheticEvent, use, useEffect, useRef, useState } from "react";
 // Custom Imports
 import { CustomMenubar } from "@/app/lib/menubar_items";
 import { MarkupInterpretor } from '@/app/lib/ui/components/markdownInterpretor';
@@ -26,9 +26,26 @@ export default function Page({ params }: { params: { registryId: string, repoNam
     const cm = useRef(null);
     const toasts = useRef(null);
 
-    const onRightClick = (event) => {
+    const onRightClick = (event: SyntheticEvent) => {
         if (cm.current) {
-            cm.current.show(event);
+            (cm.current as ContextMenu).show(event);
+        }
+    }
+
+    const saveDescription = async () => {
+        const response = await fetch(`/api/registries/${registryId}/repositories/${repoName}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ description: editedDescription, creationMode: description == "" ? true : false })
+        });
+
+        if (response.ok) {
+            setDescription(editedDescription);
+            (toasts.current as Toast).show({ severity: 'success', summary: 'Succès', detail: 'Description enregistrée avec succès', life: 3000 });
+        } else {
+            (toasts.current as Toast).show({ severity: 'error', summary: 'Erreur', detail: 'Erreur lors de l\'enregistrement de la description', life: 3000 });
         }
     }
 
@@ -39,12 +56,12 @@ export default function Page({ params }: { params: { registryId: string, repoNam
             command: () => {
                 if (selectedTag == "") {
                     if (toasts.current) {
-                        toasts.current.show({ severity: 'warn', summary: 'Avertissement', detail: 'Veuillez sélectionner un tag avant de copier la commande', life: 3000 });
+                        (toasts.current as Toast).show({ severity: 'warn', summary: 'Avertissement', detail: 'Veuillez sélectionner un tag avant de copier la commande', life: 3000 });
                     }
                 } else {
                     navigator.clipboard.writeText(`docker pull ${imageName}:${selectedTag}`);
                     if (toasts.current) {
-                        toasts.current.show({ severity: 'success', summary: 'Succès', detail: 'Commande docker pull copiée dans le presse-papier', life: 3000 });
+                        (toasts.current as Toast).show({ severity: 'success', summary: 'Succès', detail: 'Commande docker pull copiée dans le presse-papier', life: 3000 });
                     }
                 }
             }
@@ -56,16 +73,16 @@ export default function Page({ params }: { params: { registryId: string, repoNam
         },
     ];
     const accept = () => {
-        toasts.current.show({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
+        (toasts.current as Toast).show({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
     };
 
     const reject = () => {
-        toasts.current.show({ severity: 'warn', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+        (toasts.current as Toast).show({ severity: 'warn', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
     };
 
-    const confirmationSuppression = (event) => {
+    const confirmationSuppression = (event: unknown) => {
         confirmPopup({
-            target: event.currentTarget,
+            target: (event as any).currentTarget,
             message: 'Cette action est irréversible. Voulez-vous procéder?',
             icon: 'pi pi-exclamation-triangle',
             rejectIcon: 'pi pi-times',
@@ -94,7 +111,7 @@ export default function Page({ params }: { params: { registryId: string, repoNam
         <div>
             <CustomMenubar />
             <div className="p-4">
-                <h1 className="text-2xl text-gray-950 font-bold mb-4">Informations sur l'image : {imageName}</h1>
+                <h1 className="text-2xl text-gray-950 font-bold mb-4">Informations sur l&apos;image : {imageName}</h1>
                 <Card>
                     <h1 className="text-3xl text-gray-900 font-bold mb-4">Actions</h1>
                     <Button label="Retour aux repositories" icon="pi pi-arrow-left" className="p-button-text" onClick={() => window.location.href = "/registries/" + registryId} />
@@ -106,7 +123,7 @@ export default function Page({ params }: { params: { registryId: string, repoNam
                 <Card style={{ width: '100%', height: '100%' }} className="mb-4">
                     <Accordion activeIndex={0}>
                         <AccordionTab header="Description">
-                            <p className="text-gray-700">{description != "" ? description : "Aucune description disponible pour cette image."}</p>
+                            <MarkupInterpretor markdownText={description} />
                         </AccordionTab>
                         <AccordionTab header="Tags">
                             <ListBox
@@ -125,15 +142,14 @@ export default function Page({ params }: { params: { registryId: string, repoNam
                 <Dialog header="Modifier les informations concernant l'image" visible={dialogIsVisible} style={{width:'60vw'}} onHide={() => { if (!dialogIsVisible) return; setDialogIsVisible(false); }}>
                     <TabView>
                         <TabPanel header="&nbsp;&nbsp;Edition" leftIcon="pi pi-pencil">
-                            <Editor value={editedDescription} onTextChange={(e) => setEditedDescription(e)} style={{ height: '320px' }} />  
+                            <Editor value={editedDescription} onTextChange={(e) => setEditedDescription(e.textValue)} style={{ height: '320px' }} />  
                             <div style={{ height: '1rem' }}></div>
                         </TabPanel>
                         <TabPanel header="&nbsp;&nbsp;Prévisualiser" leftIcon="pi pi-eye">
                             <MarkupInterpretor markdownText={editedDescription} />
-                            <div dangerouslySetInnerHTML={{ __html: editedDescription }} />
                         </TabPanel>
                     </TabView>
-                    <Button label="Enregistrer les modifications" icon="pi pi-check" className="mt-2" onClick={() => {console.log("on enregistre");}} />&nbsp;
+                    <Button label="Enregistrer les modifications" icon="pi pi-check" className="mt-2" onClick={() => {saveDescription();}} />&nbsp;
                     <Button label="Aide" icon="pi pi-question" onClick={()=> alert("Afficher l'aide")} />
                 </Dialog>
             </div>

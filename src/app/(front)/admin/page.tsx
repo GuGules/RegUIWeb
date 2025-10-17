@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 // Import des composants "fait maison"
 import { useCheckSessionForAdmin } from "@/app/lib/ui/checkSession"
 import { CustomMenubar } from "@/app/lib/menubar_items";
+import { Registry } from "@/app/lib/models/registry";
 
 /* Import des composants PrimeReact */
 import { TabView,TabPanel } from "primereact/tabview";
@@ -18,7 +19,6 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Checkbox } from 'primereact/checkbox';
 import { Toast } from "primereact/toast";
-import { useRouter } from "next/navigation";
 
 export default function AdminPage(){
 
@@ -27,12 +27,11 @@ export default function AdminPage(){
         { name: 'Resend', value: 'Resend' }
     ];
 
-    const router = useRouter();
     const [newRegistryName, setNewRegistryName] = useState<string>('');
     const [newRegistryURL, setNewRegistryURL] = useState<string>('');
     const [newRegistryDescription, setNewRegistryDescription] = useState<string>('');
     const [newRegistryIsPublic, setNewRegistryIsPublic] = useState<boolean>(false);
-    const [registries, setRegistries] = useState<Array<any>>([]);
+    const [registries, setRegistries] = useState<Array<Registry>>([]);
     const [emailMode, setEmailMode] = useState<string>('');
     const [addRegModalVisible, setAddRegModalVisible] = useState<boolean>(false);
     const [smtpHost, setSmtpHost] = useState<string>('');

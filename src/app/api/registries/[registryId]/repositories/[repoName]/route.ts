@@ -1,10 +1,11 @@
+import { ImageDetails } from "@/app/lib/models/registry";
 import { listTags } from "@/app/lib/registry/connector";
-import { getRegistryData } from "@/app/lib/reguidb/registry";
-import { getImageData } from "@/app/lib/reguidb/registry";
+import { getRegistryData, updateImageData } from "@/app/lib/reguidb/registry";
+import { getImageData, setImageData } from "@/app/lib/reguidb/registry";
 import { NextRequest,NextResponse } from "next/server";
 
 export async function GET(req:NextRequest,{params}){
-    const {registryId, repoName} = params;
+    const {registryId, repoName} = await params;
 
     try{
         const registryData:any = await getRegistryData(parseInt(registryId));
@@ -23,7 +24,7 @@ export async function GET(req:NextRequest,{params}){
             description: ""
         }
 
-        const imageDetails:any = await getImageData(registryId, repoName);
+        const imageDetails:ImageDetails = await getImageData(registryId, repoName);
         if (imageDetails){
             response.description = imageDetails.description;
         }
@@ -33,6 +34,26 @@ export async function GET(req:NextRequest,{params}){
     } catch (error) {
         console.error("Error fetching repository data:", error);
         return NextResponse.json({ error: "Failed to fetch repository data" }, { status: 500 });
+    } 
+    
+}
+
+export async function PUT(req:NextRequest,{params}){
+    const {registryId, repoName} = await params;
+
+    try{
+        const data = await req.json();
+
+        if (data.creationMode){
+            await setImageData(registryId, repoName, data.description);
+        } else {
+            await updateImageData(registryId, repoName, data.description);
+        }
+        return NextResponse.json({ message: "Description updated successfully"}, { status: 200 });
+
+    } catch (error) {
+        console.error("Failed to update data:", error);
+        return NextResponse.json({ error: "Failed to update data" }, { status: 500 });
     } 
     
 }

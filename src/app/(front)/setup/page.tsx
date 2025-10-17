@@ -36,7 +36,7 @@ export default function SetupPage(){
                 }
             })
         } catch (error) {
-            console.info('Database not configured, waiting for setup');
+            console.error('Database not configured, waiting for setup\n More details : ', error);
         }
     },[router])
 

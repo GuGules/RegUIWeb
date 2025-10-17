@@ -20,6 +20,7 @@ export async function DELETE(req:NextRequest,{params}){
     try {
         await deleteRegistry(parseInt(registryId));
     } catch (error) {
+        console.error('Error deleting registry:', error);
         return NextResponse.json({error:'Internal Server Error'},{status:500});
     }
 

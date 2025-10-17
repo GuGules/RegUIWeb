@@ -27,6 +27,20 @@ export function useCheckSessionForLoginPage() {
   }, [router]);
 }
 
+export function useCheckSessionForRootPage() {
+  const router = useRouter();
+  useEffect(() => {
+    fetch("/api/checkSession").then(async (res) => {
+      const userData = await res.json();
+      if (userData.isConnected) {
+        router.replace("/home");
+      } else {
+        router.replace("/login");
+      }
+    });
+  }, [router]);
+}
+
 export function useCheckSessionForAdmin() {
   const router = useRouter();
   useEffect(() => {

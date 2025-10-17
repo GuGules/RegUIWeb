@@ -1,3 +1,4 @@
+import { ImageDetails } from '../models/registry';
 import { pool } from './db';
 
 export async function listRegistries(){
@@ -21,7 +22,6 @@ export async function createRegistry(
     description: string
 ){
     const conn = await pool.getConnection();
-
     try {
         const [result] = await conn.query(`INSERT INTO registries (nom, url${description == ""? ", description" : ""}, is_public) VALUES (?, ?${description == ""? ", ?" : ""}, ?)`, [name, url, description, isPublic]);
     } catch (err){
@@ -66,11 +66,11 @@ export async function getRegistryData(
 
 export async function getImageData(
     registryId: string, imageName: string
-){
+) : Promise<ImageDetails> {
     const conn = await pool.getConnection();
     try{
         const [rows] = await conn.query(`SELECT * FROM images WHERE registry_id = ? AND nom_image = ?`, [registryId, imageName]);
-        const data = (rows as unknown[])[0];
+        const data = (rows as ImageDetails[])[0];
         return data;
     } catch (err){
         console.error(err);
@@ -100,7 +100,7 @@ export async function updateImageData(
 ){
     const conn = await pool.getConnection();
     try{
-        const [rows] = await conn.query(`UPDATE images SET description = ? WHERE registry_id = ? AND name = ?`, [description, registryId, imageName]);
+        const [rows] = await conn.query(`UPDATE images SET description = ? WHERE registry_id = ? AND nom_image = ?`, [description, registryId, imageName]);
         return rows;
     } catch (err){
         console.error(err);

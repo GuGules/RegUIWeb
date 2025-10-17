@@ -9,12 +9,13 @@ import { useRouter } from "next/navigation";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { useEffect, useState } from "react";
+import { Registry } from "@/app/lib/models/registry";
 
 export default function Registries() {
     useCheckSession();
 
     const router = useRouter();
-    const [registries, setRegistries] = useState<Array<any>>([]);
+    const [registries, setRegistries] = useState<Array<Registry>>([]);
     // Template pour la colonne Actions
     const actionsBodyTemplate = (rowData: { id: number }) => (
         <div>
@@ -36,6 +37,7 @@ export default function Registries() {
         fetchData();
     }, []);
 
+    console.log(registries);
     return (
         <div>
             <CustomMenubar />

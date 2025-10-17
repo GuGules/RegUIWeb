@@ -21,6 +21,7 @@ export async function POST(req: NextRequest){
         const registries = await listRegistries();
         return NextResponse.json({ message: 'Registry created successfully', registries: registries }, { status: 200 });
     } catch (error) {
+        console.error(error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

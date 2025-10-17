@@ -17,6 +17,7 @@ export async function GET(){
         const registries = await listRegistries();
         return NextResponse.json(registries);
     } catch (error) {
+        console.error('Error listing registries:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }
