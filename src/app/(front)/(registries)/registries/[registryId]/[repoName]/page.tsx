@@ -16,7 +16,7 @@ import { CustomMenubar } from "@/app/lib/menubar_items";
 import { MarkupInterpretor } from '@/app/lib/ui/components/markdownInterpretor';
 
 export default function Page({ params }: { params: { registryId: string, repoName: string } }) {
-    const { registryId, repoName }: { registryId: string, repoName: string } = use(params);
+    const { registryId, repoName } = use(params);
     const [imageName, setImageName] = useState(repoName);
     const [description, setDescription] = useState("");
     const [tags, setTags] = useState<string[]>([]);
