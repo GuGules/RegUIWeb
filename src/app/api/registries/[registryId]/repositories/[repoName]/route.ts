@@ -3,12 +3,13 @@ import { listTags } from "@/app/lib/registry/connector";
 import { getRegistryData, updateImageData } from "@/app/lib/reguidb/registry";
 import { getImageData, setImageData } from "@/app/lib/reguidb/registry";
 import { NextRequest,NextResponse } from "next/server";
+import { Registry } from "@/app/lib/models/registry";
 
-export async function GET(req:NextRequest,{params}){
+export async function GET(req:NextRequest,{params}: {params :Promise<{registryId:string, repoName:string}>}) {
     const {registryId, repoName} = await params;
 
     try{
-        const registryData = await getRegistryData(parseInt(registryId));
+        const registryData : Registry = await getRegistryData(parseInt(registryId));
         const repoTags = await listTags(registryData.url, repoName);
         let namePrefix = "";
         if (registryData.url.startsWith("https://")){
@@ -38,7 +39,7 @@ export async function GET(req:NextRequest,{params}){
     
 }
 
-export async function PUT(req:NextRequest,{params}){
+export async function PUT(req:NextRequest,{params}: { params: Promise<{registryId:string, repoName:string}>}) {
     const {registryId, repoName} = await params;
 
     try{

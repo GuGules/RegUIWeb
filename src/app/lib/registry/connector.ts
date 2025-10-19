@@ -8,8 +8,8 @@ function uniformUrl(url: string): string {
     return url;
 }
 
-export async function listRepositories(reg){
-    uniformUrl(reg);
+export async function listRepositories(reg: string){
+    reg = uniformUrl(reg);
     return fetch(`${reg}/v2/_catalog`, {
         method: 'GET',
         headers: {
@@ -20,7 +20,7 @@ export async function listRepositories(reg){
     }).then(res => res.json());
 }
 
-export async function listTags(reg, repo){
+export async function listTags(reg: string, repo: string){
     try {
     reg = uniformUrl(reg);
     return fetch(`${reg}/v2/${repo}/tags/list`, {

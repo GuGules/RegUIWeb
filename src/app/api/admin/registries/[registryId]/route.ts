@@ -3,9 +3,8 @@ import { checkIsAdmin } from "@/app/lib/reguidb/user";
 import { sessionIsOk } from "@/app/lib/session";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function DELETE(req:NextRequest,{params}){
-    console.log(params)
-    const {registryId} = params;
+export async function DELETE(req:NextRequest,{params}: {params:Promise<{registryId:string}>}) {
+    const {registryId} = await params;
 
     const userId = await sessionIsOk();
     if (!userId) {

@@ -10,13 +10,14 @@ import { Editor } from 'primereact/editor';
 import { ListBox } from 'primereact/listbox';
 import { Toast } from "primereact/toast";
 import { TabView, TabPanel } from 'primereact/tabview';
-import { SyntheticEvent, use, useEffect, useRef, useState } from "react";
+import { SyntheticEvent, useEffect, useRef, useState, MouseEvent } from "react";
 // Custom Imports
 import { CustomMenubar } from "@/app/lib/menubar_items";
 import { MarkupInterpretor } from '@/app/lib/ui/components/markdownInterpretor';
 
-export default function Page({ params }: { params: { registryId: string, repoName: string } }) {
-    const { registryId, repoName } = use(params);
+export default function Page(props: unknown) {
+    const { params } = props as { params: { registryId: string; repoName: string } };
+    const { registryId, repoName } = params;
     const [imageName, setImageName] = useState(repoName);
     const [description, setDescription] = useState("");
     const [tags, setTags] = useState<string[]>([]);
@@ -43,9 +44,13 @@ export default function Page({ params }: { params: { registryId: string, repoNam
 
         if (response.ok) {
             setDescription(editedDescription);
-            (toasts.current as Toast).show({ severity: 'success', summary: 'Succès', detail: 'Description enregistrée avec succès', life: 3000 });
+            if (toasts.current) {
+                (toasts.current as Toast).show({ severity: 'success', summary: 'Succès', detail: 'Description enregistrée avec succès', life: 3000 });
+            }
         } else {
-            (toasts.current as Toast).show({ severity: 'error', summary: 'Erreur', detail: 'Erreur lors de l\'enregistrement de la description', life: 3000 });
+            if (toasts.current) {
+                (toasts.current as Toast).show({ severity: 'error', summary: 'Erreur', detail: 'Erreur lors de l\'enregistrement de la description', life: 3000 });
+            }
         }
     }
 
@@ -73,14 +78,18 @@ export default function Page({ params }: { params: { registryId: string, repoNam
         },
     ];
     const accept = () => {
-        (toasts.current as Toast).show({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
+        if (toasts.current){
+            (toasts.current as Toast).show({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
+        }
     };
 
     const reject = () => {
-        (toasts.current as Toast).show({ severity: 'warn', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+        if (toasts.current){
+            (toasts.current as Toast).show({ severity: 'warn', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+        }
     };
 
-    const confirmationSuppression = (event: unknown) => {
+    const confirmationSuppression = (event: MouseEvent<HTMLElement>) => {
         confirmPopup({
             target: event.currentTarget,
             message: 'Cette action est irréversible. Voulez-vous procéder?',

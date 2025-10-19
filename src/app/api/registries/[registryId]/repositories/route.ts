@@ -2,8 +2,8 @@ import { listRepositories } from '@/app/lib/registry/connector';
 import { getRegistryData } from "@/app/lib/reguidb/registry";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req:NextRequest,{params}){
-    const {registryId} = params;
+export async function GET(req:NextRequest,{params}: {params: Promise<{registryId:string}>}) {
+    const {registryId} = await params;
 
     const registryData = await getRegistryData(parseInt(registryId));
 

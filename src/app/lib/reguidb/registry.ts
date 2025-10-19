@@ -1,4 +1,4 @@
-import { ImageDetails } from '../models/registry';
+import { ImageDetails, Registry } from '../models/registry';
 import { pool } from './db';
 
 export async function listRegistries(){
@@ -47,12 +47,19 @@ export async function deleteRegistry(
 
 export async function getRegistryData(
     registryId: number
-){
+) : Promise<Registry> {
     const conn = await pool.getConnection();
     try {
-        const [rows] = await conn.query(`SELECT * FROM registries WHERE id = ?`, [registryId]);
+        const [rows]: unknown[]= await conn.query(`SELECT * FROM registries WHERE id = ?`, [registryId]);
         if (Array.isArray(rows) && rows.length > 0){
-            return rows[0];
+            const regData : Registry = {
+                id: rows[0].id,
+                nom: rows[0].nom,
+                url: rows[0].url,
+                description: rows[0].description,
+                is_public: rows[0].is_public
+            };
+            return regData;
         }
         throw new Error('No registry found with this ID');
     } catch (err){

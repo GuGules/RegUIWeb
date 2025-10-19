@@ -19,6 +19,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Checkbox } from 'primereact/checkbox';
 import { Toast } from "primereact/toast";
+import { error } from "console";
 
 export default function AdminPage(){
 
@@ -93,13 +94,19 @@ export default function AdminPage(){
                 setNewRegistryDescription('');
                 setNewRegistryIsPublic(false);
                 setRegistries((await response.json()).registries);
-                errorAlert.current.show({ severity: 'success', summary: 'Succès', detail: 'Le registre a été créé avec succès.' });
+                if (errorAlert.current){
+                    (errorAlert.current as Toast).show({ severity: 'success', summary: 'Succès', detail: 'Le registre a été créé avec succès.' });
+                }
             } else {
-                errorAlert.current.show({ severity: 'error', summary: 'Erreur', detail: 'Une erreur est survenue lors de la création du registre.' });
+                if (errorAlert.current){
+                    (errorAlert.current as Toast).show({ severity: 'error', summary: 'Erreur', detail: 'Une erreur est survenue lors de la création du registre.' });
+                }
             }
         } catch (error) {
             console.error('Error creating registry:', error);
-            errorAlert.current.show({ severity: 'error', summary: 'Erreur', detail: 'Une erreur est survenue lors de la création du registre.' });
+            if (errorAlert.current){
+                (errorAlert.current as Toast).show({ severity: 'error', summary: 'Erreur', detail: 'Une erreur est survenue lors de la création du registre.' });
+            }
         } finally {
             setAddRegModalVisible(false);
         }
@@ -115,14 +122,20 @@ export default function AdminPage(){
             });
             if (response.ok) {
                 setRegistries(registries.filter(registry => registry.id !== registryId));
-                errorAlert.current.show({ severity: 'success', summary: 'Succès', detail: 'Le registre a été supprimé avec succès.' });
+                if (errorAlert.current){
+                    (errorAlert.current as Toast).show({ severity: 'success', summary: 'Succès', detail: 'Le registre a été supprimé avec succès.' });
+                }
             }
             else {
-                errorAlert.current.show({ severity: 'error', summary: 'Erreur', detail: 'Une erreur est survenue lors de la suppression du registre.' });
+                if (errorAlert.current){
+                    (errorAlert.current as Toast).show({ severity: 'error', summary: 'Erreur', detail: 'Une erreur est survenue lors de la suppression du registre.' });
+                }
             }
         } catch (error) {
             console.error('Error deleting registry:', error);
-            errorAlert.current.show({ severity: 'error', summary: 'Erreur', detail: 'Une erreur est survenue lors de la suppression du registre.' });
+            if (errorAlert.current){
+                (errorAlert.current as Toast).show({ severity: 'error', summary: 'Erreur', detail: 'Une erreur est survenue lors de la suppression du registre.' });
+            }
         }
     }
     // Template pour la colonne Actions

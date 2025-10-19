@@ -1,16 +1,17 @@
 "use client";
 import { CustomMenubar } from "@/app/lib/menubar_items";
-import { use, useEffect,  useState } from "react";
+import { useEffect,  useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";     
 
 
-export default function Page({ params }: { params: { registryId: string } }) {
-    const { registryId }:{ registryId: string } = use(params); 
+export default function Page(props: unknown) {
+    const { params } = props as { params: { registryId: string }};
+    const { registryId } = params;
     const [registryRepos,setRegistryRepos] = useState([]);
 
-    const actionsBodyTemplate = (rowData: { id: number }) => (
+    const actionsBodyTemplate = (rowData: { id: number, name: string }) => (
         <div>
             <Button
                 icon="pi pi-search"

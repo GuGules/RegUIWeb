@@ -68,7 +68,7 @@ export default function CreateUserPage(){
 
     return (
         <div>
-            <CustomMenubar style={{ width: '100vw', borderRadius: 0 }} />
+            <CustomMenubar/>
             <div style={{ height: '1rem' }} />
             <div className="mr-3 ml-3">
                 <Card title="Créer un Utilisateur">

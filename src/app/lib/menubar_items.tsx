@@ -6,7 +6,15 @@ import { useEffect, useRef, useState } from 'react';
 import { Menubar } from 'primereact/menubar';
 import Image from 'next/image';
 
-export const profile_items = [
+// Définir un type pour les éléments du menu
+type MenuItem = {
+    label: string;
+    icon: string;
+    command?: () => void;
+    items?: MenuItem[]; // Permet de gérer les sous-menus
+};
+
+export const profile_items: MenuItem[] = [
     {
         label: 'Mon Profil',
         icon: 'pi pi-user',
@@ -19,7 +27,7 @@ export const profile_items = [
     }
 ];
 
-export const items = [
+export const items: MenuItem[] = [
     {
         label: 'Accueil',
         icon: 'pi pi-home',
