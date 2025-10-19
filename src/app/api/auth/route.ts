@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const service = searchParams.get('service') || 'registry';
   const scope = searchParams.get('scope');
-  const account = searchParams.get('account');
+  //const account = searchParams.get('account');
 
   // Vérifier l'authentification basique
   const authHeader = request.headers.get('authorization');

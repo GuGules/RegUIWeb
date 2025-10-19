@@ -82,7 +82,7 @@ export default function Page({ params }: { params: { registryId: string, repoNam
 
     const confirmationSuppression = (event: unknown) => {
         confirmPopup({
-            target: (event as any).currentTarget,
+            target: event.currentTarget,
             message: 'Cette action est irréversible. Voulez-vous procéder?',
             icon: 'pi pi-exclamation-triangle',
             rejectIcon: 'pi pi-times',
@@ -105,7 +105,7 @@ export default function Page({ params }: { params: { registryId: string, repoNam
             setImageName(data.name);
         }
         fetchData();
-    }, [registryId]);
+    }, [registryId, repoName]);
 
     return (
         <div>

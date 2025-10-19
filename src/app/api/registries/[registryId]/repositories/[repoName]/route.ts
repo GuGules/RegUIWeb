@@ -8,7 +8,7 @@ export async function GET(req:NextRequest,{params}){
     const {registryId, repoName} = await params;
 
     try{
-        const registryData:any = await getRegistryData(parseInt(registryId));
+        const registryData = await getRegistryData(parseInt(registryId));
         const repoTags = await listTags(registryData.url, repoName);
         let namePrefix = "";
         if (registryData.url.startsWith("https://")){

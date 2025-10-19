@@ -1,7 +1,7 @@
 export function MarkupInterpretor({ markdownText }: { markdownText: string }) {
     let markupHtml = "";
 
-    let textToRender:string = markdownText ? markdownText : "Aucune description disponible pour ce dépôt.";
+    const textToRender:string = markdownText ? markdownText : "Aucune description disponible pour ce dépôt.";
 
     textToRender.split(';').forEach(line => {
         line = line.replaceAll("\\k","<br>");

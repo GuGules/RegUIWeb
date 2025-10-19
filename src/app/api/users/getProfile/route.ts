@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { sessionIsOk } from "@/app/lib/session";
 import { getUserById } from "@/app/lib/reguidb/user";
 
@@ -13,6 +13,7 @@ export async function GET(){
             const userData = await getUserById(userId);
             return NextResponse.json(userData);
         } catch (error) {
+            console.error("Error fetching user data:", error);
             return NextResponse.json({ error: "Echec lors de la récupération des données utilisateur" }, { status: 500 });
         }
     }

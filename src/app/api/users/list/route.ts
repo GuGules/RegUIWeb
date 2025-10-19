@@ -1,6 +1,6 @@
 import { listUsers, checkIsAdmin } from '@/app/lib/reguidb/user';
 import { sessionIsOk } from '@/app/lib/session';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 export async function GET(){
     const userId = await sessionIsOk();
@@ -16,6 +16,7 @@ export async function GET(){
         const users = await listUsers();
         return NextResponse.json(users);
     } catch (error) {
+        console.error('Error fetching users:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

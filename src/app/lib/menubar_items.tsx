@@ -4,6 +4,7 @@ import { Menu } from 'primereact/menu';
 import { Button } from 'primereact/button';
 import { useEffect, useRef, useState } from 'react';
 import { Menubar } from 'primereact/menubar';
+import Image from 'next/image';
 
 export const profile_items = [
     {
@@ -49,7 +50,7 @@ export function EndMenu() {
 }
 
 export const start = (
-    <img alt="logo" src="/favicon.ico" style={{ height: '2rem' }} className="mr-2" />
+    <Image alt="logo" src="/favicon.ico" style={{ height: '2rem' }} className="mr-2" />
 );
 
 export const end = <EndMenu />;
@@ -76,7 +77,7 @@ export const CustomMenubar = () => {
                     }
                 ];
             });
-        }}, [items]);
+        }}, []);
 
     return (
         <Menubar model={menuItems} start={start} end={end} />

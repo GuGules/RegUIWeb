@@ -23,7 +23,7 @@ export async function createRegistry(
 ){
     const conn = await pool.getConnection();
     try {
-        const [result] = await conn.query(`INSERT INTO registries (nom, url${description == ""? ", description" : ""}, is_public) VALUES (?, ?${description == ""? ", ?" : ""}, ?)`, [name, url, description, isPublic]);
+        await conn.query(`INSERT INTO registries (nom, url${description == ""? ", description" : ""}, is_public) VALUES (?, ?${description == ""? ", ?" : ""}, ?)`, [name, url, description, isPublic]);
     } catch (err){
         console.error(err);
         throw new Error('Failed to create registry into database');
@@ -52,7 +52,6 @@ export async function getRegistryData(
     try {
         const [rows] = await conn.query(`SELECT * FROM registries WHERE id = ?`, [registryId]);
         if (Array.isArray(rows) && rows.length > 0){
-            // @ts-ignore
             return rows[0];
         }
         throw new Error('No registry found with this ID');

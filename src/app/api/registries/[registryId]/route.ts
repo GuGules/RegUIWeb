@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest, { params }: { params: { registryId: string } }) {
     const { registryId } = params;
 
-    const regData:any = await getRegistryData(parseInt(registryId));
+    const regData = await getRegistryData(parseInt(registryId));
 
     return NextResponse.json({ 
         id: regData.id,
